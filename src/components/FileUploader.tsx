@@ -2,20 +2,10 @@
 
 import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import {
-  Box,
-  Button,
-  Input,
-  Heading,
-  VStack,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Button, Heading, VStack, Text } from "@chakra-ui/react";
 // ... existing code ...
 
 const FileUploader: React.FC = () => {
-  const toast = useToast();
-
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -85,7 +75,7 @@ const FileUploader: React.FC = () => {
             cursor="pointer"
             bg={isDragActive ? "gray.100" : "white"}
           >
-            <Input
+            <input
               {...getInputProps()}
               type="file"
               style={{ display: "none" }}
