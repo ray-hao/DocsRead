@@ -5,6 +5,11 @@ https://docs-read-df1a4f49df0a.herokuapp.com/
 
 # todos:
 
+# HIGH PRIORITY
+
+- fix aws lambda for multiple papge docs s3
+
+
 - set up some form of user authentication and persistence
 - integrate all mvp features from local test repo
 - limit file size
