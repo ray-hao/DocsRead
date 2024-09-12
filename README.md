@@ -9,6 +9,7 @@ https://docs-read-df1a4f49df0a.herokuapp.com/
 
 - fix aws lambda for multiple papge docs s3
 
+# MID PRIORITY
 
 - set up some form of user authentication and persistence
 - integrate all mvp features from local test repo
