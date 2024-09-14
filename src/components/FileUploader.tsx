@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Box, Button, Heading, VStack, Text, Spinner } from "@chakra-ui/react";
 import DocumentInformation from "./DocumentInformation";
+import ViewDoc from "./ViewDoc";
 
 const FileUploader: React.FC = () => {
   const [textractResults, setTextractResults] = useState<string | null>(null);
@@ -180,6 +181,9 @@ const FileUploader: React.FC = () => {
         <Spinner size="xl" mt={10} />
       )}
       {documentInformation && <DocumentInformation {...documentInformation} />}
+      {!loadingTextractResults && (
+        <ViewDoc pdfUrl="https://document-reader.s3.us-east-2.amazonaws.com/rayhao_resume.pdf" />
+      )}
     </Box>
   );
 };
