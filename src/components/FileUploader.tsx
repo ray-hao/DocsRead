@@ -5,6 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { Box, Button, Heading, VStack, Text, Spinner } from "@chakra-ui/react";
 import DocumentInformation from "./DocumentInformation";
 import ViewDoc from "./ViewDoc";
+import { BboxInformation, LambdaTextractType } from "@/types/document";
 
 const FileUploader: React.FC = () => {
   const [textractResults, setTextractResults] = useState<string | null>(null);
@@ -13,12 +14,18 @@ const FileUploader: React.FC = () => {
   const [textractResultsUrl, setTextractResultsUrl] = useState<string | null>(
     null
   );
+  const [uploadedFileUrl, setuploadedFileUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const [documentInformation, setDocumentInformation] = useState<{
     score?: number;
     summaryPoints?: string[];
     sketchyClauses?: string[];
   } | null>(null);
+  const [bboxInformation, setBboxInformation] = useState<
+    BboxInformation[] | null
+  >(null);
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
@@ -55,6 +62,7 @@ const FileUploader: React.FC = () => {
 
       const result = await response.json();
       setLoadingTextractResults(true);
+      setuploadedFileUrl(result?.url);
       setTextractResultsUrl(result?.url + "-results.json");
     };
 
@@ -71,8 +79,17 @@ const FileUploader: React.FC = () => {
       fetch(textractResultsUrl)
         .then((response) => response.json())
         .then((data) => {
-          if (data.text && data.text.length > 0) {
-            setTextractResults(data.text.join(" "));
+          if (data.blocks && data.blocks.length > 0) {
+            const joinedText = data.blocks
+              .map((block: LambdaTextractType) => block.text)
+              .join(" ");
+            const bboxInfo = data.blocks.map((block: LambdaTextractType) => ({
+              ...block.bbox,
+              page: block.page,
+            }));
+            setTextractResults(joinedText);
+            setBboxInformation(bboxInfo);
+            console.log(bboxInfo);
           } else {
             timerId = setTimeout(pollResults, 5000) as unknown as number;
           }
@@ -181,8 +198,8 @@ const FileUploader: React.FC = () => {
         <Spinner size="xl" mt={10} />
       )}
       {documentInformation && <DocumentInformation {...documentInformation} />}
-      {!loadingTextractResults && (
-        <ViewDoc pdfUrl="https://document-reader.s3.us-east-2.amazonaws.com/rayhao_resume.pdf" />
+      {uploadedFileUrl && bboxInformation && (
+        <ViewDoc pdfUrl={uploadedFileUrl} bboxInformation={bboxInformation} />
       )}
     </Box>
   );

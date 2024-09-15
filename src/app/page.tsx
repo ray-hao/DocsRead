@@ -6,7 +6,7 @@ import { Box, Input, Button, Text, VStack, Heading } from "@chakra-ui/react";
 
 export default function App() {
   const [password, setPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(true);
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(e.target.value);
