@@ -5,10 +5,7 @@ import DocumentHighlighter from "./DocumentHighlighter";
 import { Box } from "@chakra-ui/react";
 import { BboxInformation } from "@/types/document";
 
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  "pdfjs-dist/build/pdf.worker.min.mjs",
-  import.meta.url
-).toString();
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 
 const ViewDoc = ({
   pdfUrl,
