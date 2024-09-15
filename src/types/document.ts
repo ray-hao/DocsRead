@@ -10,6 +10,7 @@ export interface BboxInformation {
   top: number;
   bottom: number;
   page: number;
+  text: string;
 }
 
 export interface LambdaTextractType {
@@ -20,5 +21,16 @@ export interface LambdaTextractType {
     top: number;
     bottom: number;
   };
+  page: number;
+}
+
+export interface DocumentHighlight {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  color: string;
+  tooltip: string;
   page: number;
 }

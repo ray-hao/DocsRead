@@ -3,7 +3,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Box, Button, Heading, VStack, Text, Spinner } from "@chakra-ui/react";
-import DocumentInformation from "./DocumentInformation";
 import ViewDoc from "./ViewDoc";
 import { BboxInformation, LambdaTextractType } from "@/types/document";
 
@@ -17,11 +16,13 @@ const FileUploader: React.FC = () => {
   const [uploadedFileUrl, setuploadedFileUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  const [documentInformation, setDocumentInformation] = useState<{
-    score?: number;
-    summaryPoints?: string[];
-    sketchyClauses?: string[];
-  } | null>(null);
+  const [documentInformation, setDocumentInformation] = useState<
+    | {
+        summary: string;
+        color: string;
+      }[]
+    | null
+  >(null);
   const [bboxInformation, setBboxInformation] = useState<
     BboxInformation[] | null
   >(null);
@@ -80,16 +81,16 @@ const FileUploader: React.FC = () => {
         .then((response) => response.json())
         .then((data) => {
           if (data.blocks && data.blocks.length > 0) {
-            const joinedText = data.blocks
-              .map((block: LambdaTextractType) => block.text)
-              .join(" ");
+            const joinedText = data.blocks.map(
+              (block: LambdaTextractType) => block.text
+            );
             const bboxInfo = data.blocks.map((block: LambdaTextractType) => ({
-              ...block.bbox,
+              text: block.text,
               page: block.page,
+              ...block.bbox,
             }));
             setTextractResults(joinedText);
             setBboxInformation(bboxInfo);
-            console.log(bboxInfo);
           } else {
             timerId = setTimeout(pollResults, 5000) as unknown as number;
           }
@@ -120,15 +121,12 @@ const FileUploader: React.FC = () => {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ text: textractResults }),
+          body: JSON.stringify({ textArray: textractResults }),
         });
 
         const data = await response.json();
-        const cleanedContent = data.choices[0].message.content
-          .replace(/```json|```/g, "")
-          .replace(/\n/g, "");
-        if (Object.keys(data).length > 0) {
-          setDocumentInformation(JSON.parse(cleanedContent));
+        if (data.length > 0) {
+          setDocumentInformation(data);
         }
       } catch (error) {
         console.error("Error fetching document data:", error);
@@ -197,9 +195,12 @@ const FileUploader: React.FC = () => {
       {loadingTextractResults && !documentInformation && (
         <Spinner size="xl" mt={10} />
       )}
-      {documentInformation && <DocumentInformation {...documentInformation} />}
-      {uploadedFileUrl && bboxInformation && (
-        <ViewDoc pdfUrl={uploadedFileUrl} bboxInformation={bboxInformation} />
+      {uploadedFileUrl && bboxInformation && documentInformation && (
+        <ViewDoc
+          pdfUrl={uploadedFileUrl}
+          bboxInformation={bboxInformation}
+          documentInformation={documentInformation}
+        />
       )}
     </Box>
   );

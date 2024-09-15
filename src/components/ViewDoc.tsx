@@ -3,6 +3,7 @@ import { pdfjs, Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import DocumentHighlighter from "./DocumentHighlighter";
 import { Box } from "@chakra-ui/react";
+import { BboxInformation } from "@/types/document";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -12,15 +13,11 @@ pdfjs.GlobalWorkerOptions.workerSrc = new URL(
 const ViewDoc = ({
   pdfUrl,
   bboxInformation,
+  documentInformation,
 }: {
   pdfUrl: string;
-  bboxInformation: {
-    left: number;
-    right: number;
-    top: number;
-    bottom: number;
-    page: number;
-  }[];
+  bboxInformation: BboxInformation[];
+  documentInformation: { summary: string; color: string }[];
 }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
 
@@ -35,8 +32,8 @@ const ViewDoc = ({
       y: bbox.top * 100,
       width: (bbox.right - bbox.left) * 100,
       height: ((bbox.bottom - bbox.top) * 100) / (numPages || 1),
-      color: "yellow",
-      tooltip: `Highlight ${index + 1}`,
+      color: documentInformation[index].color,
+      tooltip: documentInformation[index].summary,
       page: bbox.page,
     };
   });
