@@ -19,7 +19,7 @@ export default async function handler(
               {
                 role: "system",
                 content:
-                  "You are a lawyer for someone who speaks english as a second language. The input is a section of a legal document. The 'summary' property is a 1-3 sentence summary in grade 3 terms, and the 'color' property should be green, yellow, or red indicating if the section is safe or potentially sketchy, or definitely sketchy.",
+                  "You are a lawyer for someone who speaks english as a second language. The input is a section of a legal document. The 'summary' property is a 1-3 sentence summary in grade 3 terms, and the 'color' property should be green, yellow, or red indicating if the section is safe or potentially sketchy, or definitely sketchy. Make sure I can JSON.parse() your response without errors!",
               },
               {
                 role: "user",
