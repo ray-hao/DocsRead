@@ -34,3 +34,8 @@ export interface DocumentHighlight {
   tooltip: string;
   page: number;
 }
+
+export interface TextSummaryAndColor {
+  summary: string;
+  color: string;
+}

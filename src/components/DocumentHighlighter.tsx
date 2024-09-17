@@ -35,7 +35,6 @@ const DocumentHighlighter: React.FC<DocumentHighlighterProps> = ({
             backgroundColor={highlight.color}
             opacity={0.5}
             _hover={{ opacity: 0.8 }}
-            title={highlight.tooltip}
             zIndex={2}
           />
         </Tooltip>

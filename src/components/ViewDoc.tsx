@@ -3,7 +3,7 @@ import { pdfjs, Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import DocumentHighlighter from "./DocumentHighlighter";
 import { Box } from "@chakra-ui/react";
-import { BboxInformation } from "@/types/document";
+import { BboxInformation, TextSummaryAndColor } from "@/types/document";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 
@@ -14,7 +14,7 @@ const ViewDoc = ({
 }: {
   pdfUrl: string;
   bboxInformation: BboxInformation[];
-  documentInformation: { summary: string; color: string }[];
+  documentInformation: TextSummaryAndColor[];
 }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
 
@@ -41,6 +41,11 @@ const ViewDoc = ({
         .react-pdf__Page__textContent {
           display: none !important;
         }
+        hr {
+          margin: 0;
+          border: none;
+          border-top: 1px solid #e0e0e0;
+        }
       `}</style>
       <Box
         maxHeight="50vh"
@@ -52,7 +57,10 @@ const ViewDoc = ({
         <DocumentHighlighter numPages={numPages} highlights={highlights}>
           <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
             {Array.from(new Array(numPages), (el, index) => (
-              <Page key={index} pageNumber={index + 1} />
+              <Box key={index}>
+                <Page key={index} pageNumber={index + 1} />
+                {index < (numPages || 1) - 1 && <hr />}
+              </Box>
             ))}
           </Document>
         </DocumentHighlighter>

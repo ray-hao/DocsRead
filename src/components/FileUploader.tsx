@@ -4,7 +4,11 @@ import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Box, Button, Heading, VStack, Text, Spinner } from "@chakra-ui/react";
 import ViewDoc from "./ViewDoc";
-import { BboxInformation, LambdaTextractType } from "@/types/document";
+import {
+  BboxInformation,
+  LambdaTextractType,
+  TextSummaryAndColor,
+} from "@/types/document";
 
 const FileUploader: React.FC = () => {
   const [textractResults, setTextractResults] = useState<string | null>(null);
@@ -17,11 +21,7 @@ const FileUploader: React.FC = () => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const [documentInformation, setDocumentInformation] = useState<
-    | {
-        summary: string;
-        color: string;
-      }[]
-    | null
+    TextSummaryAndColor[] | null
   >(null);
   const [bboxInformation, setBboxInformation] = useState<
     BboxInformation[] | null
