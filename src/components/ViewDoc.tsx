@@ -36,7 +36,7 @@ const ViewDoc = ({
   });
 
   return (
-    <Box style={{ position: "relative" }}>
+    <Box pt={10}>
       <style jsx global>{`
         hr {
           margin: 0;
@@ -49,7 +49,6 @@ const ViewDoc = ({
         overflowX="scroll"
         borderRadius="lg"
         border="2px solid #E0E0E0"
-        mt="10vh"
       >
         <DocumentHighlighter numPages={numPages} highlights={highlights}>
           <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>

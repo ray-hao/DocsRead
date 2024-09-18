@@ -19,20 +19,13 @@ export default function App() {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      justifyContent="center"
       height={"100vh"}
       bg={bg}
       color={color}
-      p={4}
+      overflow="hidden"
+      pt={10}
     >
-      <Heading
-        as="h1"
-        size="4xl"
-        color="white"
-        position="absolute"
-        top="0"
-        mt="5vh"
-      >
+      <Heading as="h1" size="4xl" color="white">
         LegalEase
       </Heading>
       <FileUploader />

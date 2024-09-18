@@ -149,20 +149,13 @@ const FileUploader: React.FC = () => {
       display="flex"
       flexDirection="column"
       alignItems="center"
-      justifyContent="center"
-      p={4}
+      justifyContent="flex-start"
+      pt={10}
     >
       {loadingResults &&
         (!documentInformation || !bboxInformation || !uploadedFileUrl) && (
-          <Spinner size="xl" mt={10} color="white" />
+          <Spinner size="xl" mt={20} color="white" />
         )}
-      {uploadedFileUrl && bboxInformation && documentInformation && (
-        <ViewDoc
-          pdfUrl={uploadedFileUrl}
-          bboxInformation={bboxInformation}
-          documentInformation={documentInformation}
-        />
-      )}
       {!loadingResults && (
         <Box
           w="500px"
@@ -170,7 +163,6 @@ const FileUploader: React.FC = () => {
           bg="white"
           borderRadius="lg"
           border="2px solid #E0E0E0"
-          mt={10}
         >
           <VStack spacing={4}>
             <Heading as="h1" size="lg">
@@ -210,6 +202,13 @@ const FileUploader: React.FC = () => {
             </Button>
           </VStack>
         </Box>
+      )}
+      {uploadedFileUrl && bboxInformation && documentInformation && (
+        <ViewDoc
+          pdfUrl={uploadedFileUrl}
+          bboxInformation={bboxInformation}
+          documentInformation={documentInformation}
+        />
       )}
     </Box>
   );
