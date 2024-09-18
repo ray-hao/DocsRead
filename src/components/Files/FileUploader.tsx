@@ -8,7 +8,7 @@ import {
   BboxInformation,
   LambdaTextractType,
   TextSummaryAndColor,
-} from "@/types/document";
+} from "@/types/files";
 
 const FileUploader: React.FC = () => {
   const [textractResults, setTextractResults] = useState<string | null>(null);

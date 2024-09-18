@@ -3,7 +3,7 @@ import { pdfjs, Document, Page } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import DocumentHighlighter from "./DocumentHighlighter";
 import { Box } from "@chakra-ui/react";
-import { BboxInformation, TextSummaryAndColor } from "@/types/document";
+import { BboxInformation, TextSummaryAndColor } from "@/types/files";
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.mjs`;
 

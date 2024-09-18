@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Box, Tooltip } from "@chakra-ui/react";
-import { DocumentHighlight } from "@/types/document";
+import { DocumentHighlight } from "@/types/files";
 
 interface DocumentHighlighterProps {
   highlights: DocumentHighlight[];

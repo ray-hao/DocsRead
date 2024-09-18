@@ -1,16 +1,5 @@
 # Changelog
 
-## [Todo]
-
-- UI/UX
-  - Upload file without having to refresh
-  - Persist old files
-  - Make stuff look better overall. very bare bones rn.
-- set up some form of user authentication and persistence
-- integrate all mvp features from local test repo
-- fine tune model/better prompt engineering
-- More gating for pages and features?
-
 ## [1.0.1] - 2024-09-15
 
 ### Fixes

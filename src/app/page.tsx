@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { FileUploader } from "@/components";
+import { FileUploader } from "@/components/Files";
 import { Box, Heading, useColorModeValue } from "@chakra-ui/react";
 
 export default function App() {
