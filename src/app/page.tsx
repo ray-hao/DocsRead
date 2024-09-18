@@ -1,66 +1,41 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { FileUploader } from "@/components";
-import { Box, Input, Button, Text, VStack, Heading } from "@chakra-ui/react";
+import { Box, Heading, useColorModeValue } from "@chakra-ui/react";
 
 export default function App() {
-  const [password, setPassword] = useState("");
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setPassword(e.target.value);
-  const handleLogin = () => {
-    if (
-      process.env.NEXT_PUBLIC_PASSWORD &&
-      password === process.env.NEXT_PUBLIC_PASSWORD
-    ) {
-      setIsAuthenticated(true);
-    } else {
-      alert("Incorrect password");
-    }
-  };
+  const bg = useColorModeValue(
+    "var(--background, #252525)",
+    "var(--background, #000000)"
+  );
+  const color = useColorModeValue(
+    "var(--foreground, #252525)",
+    "var(--foreground, #FFFFFF)"
+  );
 
   return (
-    <Box>
-      {isAuthenticated ? (
-        <FileUploader />
-      ) : (
-        <Box
-          display="flex"
-          flexDirection="column"
-          alignItems="center"
-          justifyContent="center"
-          minH="100vh"
-          bg="gray.50"
-          p={4}
-        >
-          <VStack
-            spacing={4}
-            p={8}
-            bg="white"
-            borderRadius="md"
-            boxShadow="md"
-            w="full"
-            maxW="sm"
-          >
-            <Heading size="lg" mb={4}>
-              Access Restricted
-            </Heading>
-            <Text>Enter Password to Access</Text>
-            <Input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              mb={4}
-              placeholder="Password"
-            />
-            <Button colorScheme="blue" onClick={handleLogin} w="full">
-              Submit
-            </Button>
-          </VStack>
-        </Box>
-      )}
+    <Box
+      display="flex"
+      flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
+      height={"100vh"}
+      bg={bg}
+      color={color}
+      p={4}
+    >
+      <Heading
+        as="h1"
+        size="4xl"
+        color="white"
+        position="absolute"
+        top="0"
+        mt="5vh"
+      >
+        LegalEase
+      </Heading>
+      <FileUploader />
     </Box>
   );
 }

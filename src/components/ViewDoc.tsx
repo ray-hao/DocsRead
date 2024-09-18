@@ -38,9 +38,6 @@ const ViewDoc = ({
   return (
     <Box style={{ position: "relative" }}>
       <style jsx global>{`
-        .react-pdf__Page__textContent {
-          display: none !important;
-        }
         hr {
           margin: 0;
           border: none;
@@ -52,13 +49,17 @@ const ViewDoc = ({
         overflowX="scroll"
         borderRadius="lg"
         border="2px solid #E0E0E0"
-        mt="20px"
+        mt="10vh"
       >
         <DocumentHighlighter numPages={numPages} highlights={highlights}>
           <Document file={pdfUrl} onLoadSuccess={onDocumentLoadSuccess}>
             {Array.from(new Array(numPages), (el, index) => (
               <Box key={index}>
-                <Page key={index} pageNumber={index + 1} />
+                <Page
+                  key={index}
+                  pageNumber={index + 1}
+                  renderTextLayer={false}
+                />
                 {index < (numPages || 1) - 1 && <hr />}
               </Box>
             ))}

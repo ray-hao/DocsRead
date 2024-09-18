@@ -12,8 +12,7 @@ import {
 
 const FileUploader: React.FC = () => {
   const [textractResults, setTextractResults] = useState<string | null>(null);
-  const [loadingTextractResults, setLoadingTextractResults] =
-    useState<boolean>(false);
+  const [loadingResults, setLoadingResults] = useState<boolean>(false);
   const [textractResultsUrl, setTextractResultsUrl] = useState<string | null>(
     null
   );
@@ -43,6 +42,13 @@ const FileUploader: React.FC = () => {
   const handleUpload = async () => {
     if (!selectedFile) return;
 
+    setBboxInformation(null);
+    setDocumentInformation(null);
+    setTextractResults(null);
+    setTextractResultsUrl(null);
+    setuploadedFileUrl(null);
+    setLoadingResults(true);
+
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64data = reader.result?.toString().split(",")[1];
@@ -62,7 +68,6 @@ const FileUploader: React.FC = () => {
       });
 
       const result = await response.json();
-      setLoadingTextractResults(true);
       setuploadedFileUrl(result?.url);
       setTextractResultsUrl(result?.url + "-results.json");
     };
@@ -71,8 +76,7 @@ const FileUploader: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!loadingTextractResults || !textractResultsUrl || textractResults)
-      return;
+    if (!textractResultsUrl || textractResults) return;
 
     let timerId: number | null;
 
@@ -109,7 +113,7 @@ const FileUploader: React.FC = () => {
         clearTimeout(timerId);
       }
     };
-  }, [loadingTextractResults, textractResultsUrl, textractResults]);
+  }, [textractResultsUrl, textractResults]);
 
   useEffect(() => {
     if (!textractResults) return;
@@ -127,6 +131,8 @@ const FileUploader: React.FC = () => {
         const data = await response.json();
         if (data.length > 0) {
           setDocumentInformation(data);
+          setLoadingResults(false);
+          setSelectedFile(null);
         }
       } catch (error) {
         console.error("Error fetching document data:", error);
@@ -144,63 +150,66 @@ const FileUploader: React.FC = () => {
       flexDirection="column"
       alignItems="center"
       justifyContent="center"
-      minH="100vh"
-      bg="background"
-      color="foreground"
       p={4}
     >
-      <Box
-        w="full"
-        maxW="md"
-        p={6}
-        bg="white"
-        borderRadius="lg"
-        border="2px solid #E0E0E0"
-      >
-        <VStack spacing={4}>
-          <Heading as="h2" size="lg">
-            Upload your file
-          </Heading>
-          <Box
-            {...getRootProps()}
-            border="2px dashed"
-            borderColor="gray.300"
-            borderRadius="md"
-            p={4}
-            textAlign="center"
-            cursor="pointer"
-            bg={isDragActive ? "gray.100" : "white"}
-          >
-            <input
-              {...getInputProps()}
-              type="file"
-              style={{ display: "none" }}
-            />
-            {isDragActive ? (
-              <Text>Drop the files here ...</Text>
-            ) : (
-              <Text>
-                {selectedFile
-                  ? selectedFile.name
-                  : "Drag and drop some files here, or click to select files"}
-              </Text>
-            )}
-          </Box>
-          {errorMessage && <Text color="red.500">{errorMessage}</Text>}
-          <Button colorScheme="blue" width="full" onClick={handleUpload}>
-            Upload
-          </Button>
-        </VStack>
-      </Box>
-      {loadingTextractResults && !documentInformation && (
-        <Spinner size="xl" mt={10} />
-      )}
+      {loadingResults &&
+        (!documentInformation || !bboxInformation || !uploadedFileUrl) && (
+          <Spinner size="xl" mt={10} color="white" />
+        )}
       {uploadedFileUrl && bboxInformation && documentInformation && (
         <ViewDoc
           pdfUrl={uploadedFileUrl}
           bboxInformation={bboxInformation}
           documentInformation={documentInformation}
         />
+      )}
+      {!loadingResults && (
+        <Box
+          w="500px"
+          p={6}
+          bg="white"
+          borderRadius="lg"
+          border="2px solid #E0E0E0"
+          mt={10}
+        >
+          <VStack spacing={4}>
+            <Heading as="h1" size="lg">
+              {documentInformation
+                ? "Upload another file!"
+                : "Upload your file!"}
+            </Heading>
+            <Box
+              {...getRootProps()}
+              width="450px"
+              border="2px dashed"
+              borderColor="gray.300"
+              borderRadius="md"
+              p={4}
+              textAlign="center"
+              cursor="pointer"
+              bg={isDragActive ? "gray.100" : "white"}
+            >
+              <input
+                {...getInputProps()}
+                type="file"
+                style={{ display: "none" }}
+              />
+              {isDragActive ? (
+                <Text>Drop the files here ...</Text>
+              ) : (
+                <Text>
+                  {selectedFile
+                    ? selectedFile.name
+                    : "Drag and drop some files here, or click to select files"}
+                </Text>
+              )}
+            </Box>
+            {errorMessage && <Text color="red.500">{errorMessage}</Text>}
+            <Button colorScheme="blue" width="full" onClick={handleUpload}>
+              Upload
+            </Button>
+          </VStack>
+        </Box>
       )}
     </Box>
   );
