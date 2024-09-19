@@ -7,7 +7,7 @@ import { FileUploader } from "@/components/Files";
 import { PageHeader } from "@/components/Navigation";
 
 export default function App() {
-  const { user, error, isLoading } = useUser();
+  const { error, isLoading } = useUser();
   const bg = useColorModeValue(
     "var(--background, #252525)",
     "var(--background, #000000)"
