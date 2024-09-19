@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import theme from "./theme";
 import { ChakraProvider } from "@chakra-ui/react";
+import { UserProvider } from "@auth0/nextjs-auth0/client";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,9 +16,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`antialiased`}>
-        <ChakraProvider theme={theme}>{children}</ChakraProvider>
-      </body>
+      <UserProvider>
+        <body className={`antialiased`}>
+          <ChakraProvider theme={theme}>{children}</ChakraProvider>
+        </body>
+      </UserProvider>
     </html>
   );
 }
