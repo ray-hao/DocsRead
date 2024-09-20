@@ -35,8 +35,11 @@ const FileUploader: React.FC = () => {
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
-    if (file.size > 150 * 1024) {
-      setErrorMessage("File size exceeds 150KB. Please upload a smaller file.");
+    if (file.size > 500 * 1024) {
+      setErrorMessage("File size exceeds 500KB. Please upload a smaller file.");
+      setSelectedFile(null);
+    } else if (file.type !== "application/pdf") {
+      setErrorMessage("Only PDF files are allowed. Please upload a PDF file.");
       setSelectedFile(null);
     } else {
       setErrorMessage(null);
@@ -205,7 +208,13 @@ const FileUploader: React.FC = () => {
     >
       {loadingResults &&
         (!documentInformation || !bboxInformation || !uploadedFileUrl) && (
-          <Spinner size="xl" mt={20} color="white" />
+          <>
+            <Spinner size="xl" mt={20} color="white" />
+            <Text mt={10} color="white">
+              Please wait, this may take a minute (Working on making this
+              faster!)
+            </Text>
+          </>
         )}
       {!loadingResults && (
         <Box

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, useColorModeValue, Spinner } from "@chakra-ui/react";
+import { Box, useColorModeValue, Spinner, Heading } from "@chakra-ui/react";
 import { PageHeader } from "@/components/Navigation";
 import Head from "next/head";
 import { useUser } from "@auth0/nextjs-auth0/client";
@@ -55,6 +55,7 @@ export default function Test() {
         color={color}
         overflow="scroll"
         pt={10}
+        minH="100vh"
       >
         <Spinner size="xl" mt={20} color="white" />
       </Box>
@@ -67,6 +68,7 @@ export default function Test() {
         <title>LegalEase</title>
       </Head>
       <Box
+        minHeight="100vh"
         display="flex"
         flexDirection="column"
         alignItems="center"
@@ -87,7 +89,9 @@ export default function Test() {
             />
           ))
         ) : (
-          <Box>No documents found.</Box>
+          <Heading as="h1" size="lg" color="white" pt={10}>
+            No Documents Yet!
+          </Heading>
         )}
       </Box>
     </>
