@@ -2,7 +2,15 @@
 
 import React, { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { Box, Button, Heading, VStack, Text, Spinner } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Heading,
+  VStack,
+  Text,
+  Spinner,
+  Link,
+} from "@chakra-ui/react";
 import ViewDoc from "./ViewDoc";
 import {
   BboxInformation,
@@ -371,12 +379,11 @@ const FileUploader: React.FC = () => {
             />
             <Text color="white" mt={10}>
               Please{" "}
-              <a
-                href="/api/auth/login"
-                style={{ textDecoration: "underline", color: "#3081cc" }}
-              >
-                login
-              </a>{" "}
+              <Link href="/api/auth/login">
+                <Text as="a" textDecoration="underline" color="#3081cc">
+                  login
+                </Text>
+              </Link>{" "}
               to save processed documents.
             </Text>
           </>
