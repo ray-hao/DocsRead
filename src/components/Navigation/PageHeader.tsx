@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
-import { Box, Text, Button, Heading } from "@chakra-ui/react";
+import { Box, Button, Heading } from "@chakra-ui/react";
 import { useUser } from "@auth0/nextjs-auth0/client";
+import Link from "next/link";
 
 const Header: React.FC = () => {
   const { user } = useUser();
@@ -18,7 +19,6 @@ const Header: React.FC = () => {
           });
 
           const checkData = await checkResponse.json();
-          console.log("HI", checkData);
 
           if (!checkData) {
             // If the user does not exist, create the user
@@ -55,16 +55,22 @@ const Header: React.FC = () => {
       p={4}
       bg="#3081cc"
       color="white"
+      position="sticky"
+      top="0"
+      zIndex="1000"
     >
       <Heading as="h1" size="lg">
-        LegalEase
+        <Link href="/">LegalEase</Link>
       </Heading>
       <Box>
+        <Button as="a" href="/" mr={4}>
+          Home
+        </Button>
         {user ? (
           <>
-            <Text display="inline" mr={4}>
-              Welcome, {user.name}
-            </Text>
+            <Button as="a" href="/documents" mr={4}>
+              My Documents
+            </Button>
             <Button as="a" href="/api/auth/logout">
               Logout
             </Button>

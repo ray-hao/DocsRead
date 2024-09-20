@@ -9,8 +9,12 @@ import {
   LambdaTextractType,
   TextSummaryAndColor,
 } from "@/types/files";
+import { v4 as uuidv4 } from "uuid";
+import { useUser } from "@auth0/nextjs-auth0/client";
 
 const FileUploader: React.FC = () => {
+  const { user } = useUser();
+
   const [textractResults, setTextractResults] = useState<string | null>(null);
   const [loadingResults, setLoadingResults] = useState<boolean>(false);
   const [textractResultsUrl, setTextractResultsUrl] = useState<string | null>(
@@ -18,6 +22,7 @@ const FileUploader: React.FC = () => {
   );
   const [uploadedFileUrl, setuploadedFileUrl] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [databaseFileName, setDatabaseFileName] = useState<string | null>(null);
 
   const [documentInformation, setDocumentInformation] = useState<
     TextSummaryAndColor[] | null
@@ -48,10 +53,14 @@ const FileUploader: React.FC = () => {
     setTextractResultsUrl(null);
     setuploadedFileUrl(null);
     setLoadingResults(true);
+    setDatabaseFileName(null);
 
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64data = reader.result?.toString().split(",")[1];
+      const uniqueFileName = `${uuidv4()}-${selectedFile.name}`;
+
+      setDatabaseFileName(uniqueFileName);
 
       const response = await fetch("/api/upload", {
         method: "POST",
@@ -60,7 +69,7 @@ const FileUploader: React.FC = () => {
         },
         body: JSON.stringify({
           file: {
-            name: selectedFile.name,
+            name: uniqueFileName,
             type: selectedFile.type,
             data: base64data,
           },
@@ -141,6 +150,48 @@ const FileUploader: React.FC = () => {
 
     fetchDocumentData();
   }, [textractResults]);
+
+  useEffect(() => {
+    if (
+      databaseFileName &&
+      uploadedFileUrl &&
+      bboxInformation &&
+      documentInformation &&
+      user
+    ) {
+      const createDocument = async () => {
+        try {
+          const response = await fetch("/api/createDocument", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              databaseFileName,
+              uploadedFileUrl,
+              bboxInformation,
+              documentInformation,
+              userId: user.sub,
+            }),
+          });
+
+          if (!response.ok) {
+            console.error("Failed to add document");
+          }
+        } catch (error) {
+          console.error("Error adding document:", error);
+        }
+      };
+
+      createDocument();
+    }
+  }, [
+    databaseFileName,
+    uploadedFileUrl,
+    bboxInformation,
+    documentInformation,
+    user,
+  ]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
