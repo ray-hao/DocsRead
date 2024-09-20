@@ -23,10 +23,10 @@ export default function App() {
         display="flex"
         flexDirection="column"
         alignItems="center"
-        height={"100vh"}
+        minHeight={"100vh"}
         bg={bg}
         color={color}
-        overflow="hidden"
+        overflow="scroll"
         pt={10}
       >
         {isLoading ? (

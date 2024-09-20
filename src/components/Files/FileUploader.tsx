@@ -33,6 +33,8 @@ const FileUploader: React.FC = () => {
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const [returningFromAuth, setReturningFromAuth] = useState<boolean>(false);
+
   const onDrop = useCallback((acceptedFiles: File[]) => {
     const file = acceptedFiles[0];
     if (file.size > 500 * 1024) {
@@ -57,6 +59,7 @@ const FileUploader: React.FC = () => {
     setuploadedFileUrl(null);
     setLoadingResults(true);
     setDatabaseFileName(null);
+    setReturningFromAuth(false);
 
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -82,6 +85,18 @@ const FileUploader: React.FC = () => {
       const result = await response.json();
       setuploadedFileUrl(result?.url);
       setTextractResultsUrl(result?.url + "-results.json");
+
+      if (!user) {
+        localStorage.setItem(
+          "pendingUpload",
+          JSON.stringify({
+            databaseFileName: uniqueFileName,
+            uploadedFileUrl: result?.url,
+            bboxInformation: null,
+            documentInformation: null,
+          })
+        );
+      }
     };
 
     reader.readAsDataURL(selectedFile);
@@ -107,6 +122,20 @@ const FileUploader: React.FC = () => {
             }));
             setTextractResults(joinedText);
             setBboxInformation(bboxInfo);
+
+            if (!user) {
+              const pendingUpload = JSON.parse(
+                localStorage.getItem("pendingUpload") || "{}"
+              );
+              localStorage.setItem(
+                "pendingUpload",
+                JSON.stringify({
+                  ...pendingUpload,
+                  bboxInformation: bboxInfo,
+                  documentInformation: null,
+                })
+              );
+            }
           } else {
             timerId = setTimeout(pollResults, 5000) as unknown as number;
           }
@@ -120,12 +149,11 @@ const FileUploader: React.FC = () => {
     pollResults();
 
     return () => {
-      // Clean up any pending timeouts when the component unmounts
       if (timerId) {
         clearTimeout(timerId);
       }
     };
-  }, [textractResultsUrl, textractResults]);
+  }, [textractResultsUrl, textractResults, user]);
 
   useEffect(() => {
     if (!textractResults) return;
@@ -145,6 +173,19 @@ const FileUploader: React.FC = () => {
           setDocumentInformation(data);
           setLoadingResults(false);
           setSelectedFile(null);
+
+          if (!user) {
+            const pendingUpload = JSON.parse(
+              localStorage.getItem("pendingUpload") || "{}"
+            );
+            localStorage.setItem(
+              "pendingUpload",
+              JSON.stringify({
+                ...pendingUpload,
+                documentInformation: data,
+              })
+            );
+          }
         }
       } catch (error) {
         console.error("Error fetching document data:", error);
@@ -152,7 +193,7 @@ const FileUploader: React.FC = () => {
     };
 
     fetchDocumentData();
-  }, [textractResults]);
+  }, [textractResults, user]);
 
   useEffect(() => {
     if (
@@ -160,7 +201,8 @@ const FileUploader: React.FC = () => {
       uploadedFileUrl &&
       bboxInformation &&
       documentInformation &&
-      user
+      user &&
+      !returningFromAuth
     ) {
       const createDocument = async () => {
         try {
@@ -194,7 +236,55 @@ const FileUploader: React.FC = () => {
     bboxInformation,
     documentInformation,
     user,
+    returningFromAuth,
   ]);
+
+  useEffect(() => {
+    if (user) {
+      const pendingUpload = localStorage.getItem("pendingUpload");
+      if (pendingUpload) {
+        const {
+          databaseFileName,
+          uploadedFileUrl,
+          bboxInformation,
+          documentInformation,
+        } = JSON.parse(pendingUpload);
+
+        const createDocument = async () => {
+          try {
+            const response = await fetch("/api/createDocument", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                databaseFileName,
+                uploadedFileUrl,
+                bboxInformation,
+                documentInformation,
+                userId: user.sub,
+              }),
+            });
+
+            if (!response.ok) {
+              console.error("Failed to add document");
+            } else {
+              localStorage.removeItem("pendingUpload");
+            }
+          } catch (error) {
+            console.error("Error adding document:", error);
+          }
+        };
+
+        createDocument();
+        setReturningFromAuth(true);
+        setDatabaseFileName(databaseFileName);
+        setuploadedFileUrl(uploadedFileUrl);
+        setBboxInformation(bboxInformation);
+        setDocumentInformation(documentInformation);
+      }
+    }
+  }, [user]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
@@ -263,13 +353,34 @@ const FileUploader: React.FC = () => {
           </VStack>
         </Box>
       )}
-      {uploadedFileUrl && bboxInformation && documentInformation && (
-        <ViewDoc
-          pdfUrl={uploadedFileUrl}
-          bboxInformation={bboxInformation}
-          documentInformation={documentInformation}
-        />
-      )}
+      {uploadedFileUrl &&
+        bboxInformation &&
+        documentInformation &&
+        (user ? (
+          <ViewDoc
+            pdfUrl={uploadedFileUrl}
+            bboxInformation={bboxInformation}
+            documentInformation={documentInformation}
+          />
+        ) : (
+          <>
+            <ViewDoc
+              pdfUrl={uploadedFileUrl}
+              bboxInformation={bboxInformation}
+              documentInformation={documentInformation}
+            />
+            <Text color="white" mt={10}>
+              Please{" "}
+              <a
+                href="/api/auth/login"
+                style={{ textDecoration: "underline", color: "#3081cc" }}
+              >
+                login
+              </a>{" "}
+              to save processed documents.
+            </Text>
+          </>
+        ))}
     </Box>
   );
 };
