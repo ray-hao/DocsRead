@@ -4,7 +4,7 @@ https://github.com/user-attachments/assets/b43b2f29-f72d-40a8-82be-d501e5527beb
 
 # Production
 
-https://docs-read-df1a4f49df0a.herokuapp.com/
+https://legalease-064b0acccd6f.herokuapp.com/ (preparing to move to legalease-ai.com)
 
 # Planning and Workflow Docs
 
