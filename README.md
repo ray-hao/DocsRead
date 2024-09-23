@@ -1,10 +1,6 @@
-# Demo [2024-09-16]
-
-https://github.com/user-attachments/assets/b43b2f29-f72d-40a8-82be-d501e5527beb
-
 # Production
 
-https://legalease-064b0acccd6f.herokuapp.com/ (preparing to move to legalease-ai.com)
+https://www.legalease-ai.com/
 
 # Planning and Workflow Docs
 
